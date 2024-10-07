@@ -1,0 +1,278 @@
+{% extends 'flatpages/default.html' %}
+{% load custom_filters %}
+
+{% block title %}
+<h2>Статистика результатов опроса</h2>
+{% endblock title %}
+
+{% block content %}
+<style>
+    @page {
+        size: A4 landscape;
+        margin: 1cm;
+    }
+    body {
+        font-family: "Arial", Arial, sans-serif;
+        font-size: 12pt;
+    }
+    h1, h2 {
+        page-break-after: avoid;
+        margin-left: 0;
+    }
+    ul, ol {
+        page-break-inside: avoid;
+        padding-left: 20px; /* Добавляем отступ для буллетов */
+    }
+    ul {
+        list-style-type: disc; /* Буллеты для маркированного списка */
+    }
+    ol {
+        list-style-type: decimal; /* Нумерация для нумерованного списка */
+    }
+    .chart-container {
+        position: relative;
+        margin-bottom: 20px;
+    }
+    img {
+        max-width: 100%;
+        height: auto;
+    }
+    .comments-list {
+        margin-top: 20px;
+    }
+    p {
+        margin-bottom: 10px;
+    }
+    ul li, ol li {
+        margin-bottom: 5px; /* Отступ между элементами списка */
+    }
+    /* Явно задаем Arial для всех элементов pre */
+    pre {
+        font-family: Arial, sans-serif; /* Добавляем Arial для блока pre */
+        white-space: pre-wrap; /* Чтобы текст переносился, а не выводился одной строкой */
+        font-size: 12pt; /* Размер шрифта должен быть таким же, как у body */
+    }
+</style>
+
+<h2><strong>Итоги опроса рабочей группы и менеджмента о готовности к изменениям
+в рамках реализации Программы повышения производительности труда</strong></h2>
+<br><br>
+
+<h1>Результаты опроса для предприятия: {{ enterprise.name }}</h1>
+<br>
+
+<form id="surveyForm" method="post" action="{% url 'statistics' enterprise_id=enterprise.id %}">
+    {% csrf_token %}
+    <div>
+        {{ form.survey_date.label_tag }}
+        {{ form.survey_date }}
+    </div>
+    <br><br>
+
+    <h2>Аудитория:</h2>
+    <ul>
+        <li><p>члены рабочей группы</p></li>
+        <li><p>руководители высшего и среднего звена</p></li>
+    </ul>
+    <br>
+    <p><strong>ПЛАН</strong> (численность сотрудников): {{ enterprise.employees }}</p>
+    {% if responses_count > 0 %}
+    <p><strong>ФАКТ</strong> (прошли опрос): {{ response_count }}</p>
+    <br>
+
+    <p>Опрос прошли {{ response_count|percentage:enterprise.employees }}% участников</p>
+    <br>
+
+    <h2>Цели проведения опроса:</h2>
+    <p>оценка факторов, влияющих на успешную реализацию Программы на предприятии:</p>
+    <ul>
+        <li>понимание целей реализации Программы на предприятии</li>
+        <li>понимание распределения ответственности, функций и задач</li>
+        <li>вовлеченность руководства и сотрудников предприятия в реализацию Программы</li>
+        <li>информированность руководства и рабочей группы</li>
+        <li>мотивация и ожидания от Программы</li>
+        <li>оценка взаимодействия руководства, рабочей группы предприятия с ФЦК</li>
+    </ul><br>
+
+<button type="button" id="scrollToBottom" class="btn btn-secondary">Перейти в конец страницы</button>
+<br><br>
+
+<h2>Подробные статистические данные</h2><br>
+
+{% for field, chart_info in charts.items %}
+<div style="margin-bottom: 20px;">
+    {% if chart_info.name %}
+        <strong><h1 style="font-size: 24px; margin-bottom: 5px; font-weight: normal;">{{ chart_info.name }}</h1></strong>
+    {% endif %}
+    <h2 style="font-size: 18px; margin-bottom: 10px;">{{ chart_info.title }}</h2>
+    <div>{{ chart_info.chart|safe }}</div>
+    <ul style="list-style-type: none; padding-left: 0;">
+        {% for choice, color in chart_info.choices_with_colors %}
+        <li style="margin-bottom: 5px;">
+            <span style="display: inline-block; width: 10px; height: 10px; background-color: {{ color }}; margin-right: 5px;"></span>
+            {{ choice }} ({{ chart_info.percentages|get_item:choice|floatformat:0 }}%)
+        </li>
+        {% endfor %}
+    </ul>
+
+    {% if chart_info.good_choice_percentage is not None %}
+    <p style="margin-top: 10px;">
+        {% if chart_info.good_choice_percentage > chart_info.bad_choice_percentage %}
+            <strong>Сильная сторона:</strong> {{ chart_info.good_conclusion }}
+        {% else %}
+            <strong>Риски:</strong> {{ chart_info.bad_conclusion }}
+        {% endif %}
+    </p>
+    {% endif %}
+
+    {% if field == 'program_obstacles' %}
+        <strong>Наиболее частые препятствия:</strong>
+        <ul id="top-choices">
+            <!-- Элементы списка будут добавлены через JavaScript -->
+        </ul>
+
+        <script>
+            // Получаем строки top_choices и bottom_choices из шаблона
+            const topChoicesStr = "{{ chart_info.top_choices }}";
+
+            // Преобразуем строки в массивы по разделителю ';'
+            const topChoicesArr = topChoicesStr.split('; ');
+
+            // Находим элементы <ul> в HTML
+            const topChoicesList = document.getElementById('top-choices');
+
+            // Функция для добавления элементов списка
+            function addListItems(listElement, itemsArray) {
+                itemsArray.forEach(function(item) {
+                    const li = document.createElement('li');
+                    li.textContent = item;
+                    listElement.appendChild(li);
+                });
+            }
+
+            // Добавляем элементы в списки
+            addListItems(topChoicesList, topChoicesArr);
+        </script>
+    {% endif %}
+
+
+</div>
+{% endfor %}
+
+<br><h2 style="font-size: 20px; margin-top: 20px;"><strong>Дополнительные комментарии</strong></h2><br>
+<ol style="list-style-type: decimal; padding-left: 20px;">
+    {% for response in responses %}
+    <li style="margin-bottom: 5px;">{{ response.additional_comments }}</li>
+    {% endfor %}
+</ol>
+
+{% else %}
+    <h2>Нет доступной статистики</h2>
+    <p>Опросы еще не проводились или нет ответов.</p>
+{% endif %}
+
+    <!-- Форма для ввода выводов и рекомендаций -->
+    <br><h2>Выводы по результатам опроса и рекомендации по мероприятиям в области управления изменениями</h2>
+    <br>
+
+    <div>
+        {{ form.conclusions.label_tag }}
+        <br>
+        {{ form.conclusions }}
+    </div>
+    <br><br>
+
+    <div>
+        {{ form.recommendations.label_tag }}
+        <br>
+        {{ form.recommendations }}
+    </div>
+    <br><br>
+
+    <button type="button" id="saveAndDownload" class="btn btn-success">Сохранить данные и скачать PDF</button>
+
+    <br><br>
+    <br><br>
+</form>
+
+{% endblock content %}
+
+{% block extra_scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Заполняем поля conclusions и recommendations при загрузке страницы
+        const conclusionsField = document.getElementById('id_conclusions');
+        const recommendationsField = document.getElementById('id_recommendations');
+
+        if (conclusionsField && recommendationsField) {
+            conclusionsField.value = `1. Опрос показал, что все сотрудники понимают цели Программы, свою роль в ее реализации.
+2. Стоит отметить, что есть факторы, которые могут негативно сказаться на реализации Программы как на фазе «Развертывание», так и на фазе «Тиражирование»:
+   - Наибольшими препятствиями участники считают нехватку времени и большой объем информации.
+3. Необходимо отметить, что сотрудники ожидают от Программы профессионального и личного роста`;
+
+            recommendationsField.value = `1. Нехватка времени
+   - Определить роли участников Программы, за каждым зафиксировать минимальное время в неделю, которое он обязан посвящать работе над Программой
+   - Работу сотрудников, включенных в работу над реализацией Программы, максимально распределить на других сотрудников
+2. Информирование
+   - Разработать План коммуникаций. В план включить регулярное информирование о ходе Программы`;
+        }
+
+        // Обработчик для кнопки "Сохранить данные и скачать PDF"
+        let saveAndDownloadButton = document.getElementById('saveAndDownload');
+        let surveyForm = document.getElementById('surveyForm');
+
+        saveAndDownloadButton.addEventListener('click', function (e) {
+            e.preventDefault(); // Предотвращаем стандартное поведение кнопки
+
+            let formData = new FormData(surveyForm);
+
+            fetch(surveyForm.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken') // Добавляем CSRF-токен, если используете Django
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    // После успешной отправки формы перенаправляем на страницу генерации PDF
+                    window.location.href = "{% url 'generate_pdf' enterprise_id=enterprise.id %}";
+                } else {
+                    // Обработка ошибок
+                    console.error('Ошибка при отправке формы');
+                }
+            })
+            .catch(error => {
+                console.error('Ошибка:', error);
+            });
+        });
+
+        // Обработчик для кнопки "Перейти в конец страницы"
+        let scrollToBottomButton = document.getElementById('scrollToBottom');
+
+        scrollToBottomButton.addEventListener('click', function () {
+            window.scrollTo({
+                top: document.body.scrollHeight,
+                behavior: 'smooth'
+            });
+        });
+
+        // Функция для получения CSRF-токена (если используете Django)
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                let cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    let cookie = cookies[i].trim();
+                    // Проверяем, начинается ли эта строка с нужного имени cookie
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+    });
+</script>
+{% endblock extra_scripts %}
