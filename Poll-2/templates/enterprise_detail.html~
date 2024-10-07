@@ -1,0 +1,70 @@
+{% extends 'flatpages/default.html' %}
+
+{% block title %}
+<h2>Карточка предприятия {{ enterprise.name }}</h2>
+{% endblock title %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1>{{ enterprise.name }}</h1>
+    <p>Количество сотрудников: {{ enterprise.employees }}</p>
+    <br>
+    <div class="button-container"><br><br>
+        <h2>Ссылка для отправки анкеты</h2><br>
+        <div class="input-group mb-3">
+            <input type="text" id="survey-url" class="form-control survey-url-input" value="{{ survey_url }}" readonly style="border: 2px solid gray;">
+            <button class="btn btn-primary" type="button" onclick="copyToClipboard()">Скопировать ссылку</button>
+        </div><br><br>
+        {% if has_records %}
+            <a href="{% url 'statistics' enterprise.id %}" class="btn" style="background-color: #28a745; color: white;">Посмотреть статистику</a>
+        {% else %}
+            <p class="text-muted">Статистика недоступна, так как анкетирование еще не проводилось.</p>
+        {% endif %}
+        <br><br>
+        <a href="{% url 'edit_enterprise' enterprise_id=enterprise.id %}" class="btn" style="background-color: #ffc107; color: black;">Редактировать</a>
+        <br><br>
+        <a href="{% url 'user_profile' user_id=enterprise.user.id %}" class="btn btn-outline-secondary">Перейти в профиль пользователя</a><br><br>
+        <a href="{% url 'index' %}" class="btn btn-primary">Вернуться на главную</a><br><br>
+        <a href="{% url 'enterprise_list' %}" class="btn btn-secondary">Вернуться к списку предприятий</a>
+    </div>
+</div>
+
+<script>
+    function copyToClipboard() {
+        const copyText = document.getElementById("survey-url");
+        console.log("Element found:", copyText);
+
+        // Устанавливаем фокус на элемент
+        copyText.focus();
+
+        // Выбор текста в input
+        copyText.select();
+        copyText.setSelectionRange(0, 99999); // Для мобильных устройств
+
+        // Копирование текста в буфер обмена
+        navigator.clipboard.writeText(copyText.value).then(() => {
+            alert(`Ссылка скопирована: ${copyText.value}`);
+        }).catch(err => {
+            console.error('Ошибка при копировании: ', err);
+            alert('Не удалось скопировать ссылку.');
+        });
+    }
+</script>
+{% endblock %}
+
+{% block head %}
+<style>
+    .button-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px; /* Расстояние между кнопками */
+    }
+    .survey-url-input {
+        width: 150px; /* Установите желаемую ширину */
+    }
+    .body {
+        background-color: lightgray; /* Добавьте цвет фона для проверки */
+    }
+</style>
+{% endblock head %}
