@@ -27,7 +27,7 @@ class SurveyResponseAdmin(admin.ModelAdmin):
     )
     
     list_select_related = ('enterprise',)
-    actions = ['export_as_csv', 'mark_as_reviewed']
+    actions = ['export_as_csv', 'mark_as_reviewed', 'export_as_pdf']
     
     def export_as_csv(self, request, queryset):
         response = HttpResponse(content_type='text/csv')
@@ -46,6 +46,20 @@ class SurveyResponseAdmin(admin.ModelAdmin):
         self.message_user(request, f"{updated} записей были отмечены как проверенные.")
     
     mark_as_reviewed.short_description = "Отметить как проверенные"
+    
+    def export_as_pdf(self, request, queryset):
+        if queryset.count() != 1:
+            self.message_user(request, "Выберите только одну запись для экспорта в PDF.")
+            return
+        
+        survey_response = queryset.first()
+        enterprise_id = survey_response.enterprise.id
+        
+        # Генерируем PDF и отправляем его пользователю
+        response = generate_pdf(request, enterprise_id)
+        return response
+    
+    export_as_pdf.short_description = "Экспортировать в PDF"
     
     class Media:
         js = ('js/admin_custom.js',)
