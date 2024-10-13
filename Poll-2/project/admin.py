@@ -1,13 +1,12 @@
 from django.contrib import admin
 from .models import SurveyResponse, Enterprise
-from .forms import SurveyResponseAdminForm
+from .forms import SurveyForm
 import csv
 from django.http import HttpResponse
 
 
 class SurveyResponseAdmin(admin.ModelAdmin):
     model = SurveyResponse
-    form = SurveyResponseAdminForm
     list_display = (
         'id', 'enterprise', 'position_level', 'program_goal_understanding', 'role_understanding', 'supervisor_support',
         'program_encouragement', 'program_impact', 'interaction_assessment', 'program_priority',
@@ -25,9 +24,8 @@ class SurveyResponseAdmin(admin.ModelAdmin):
         'program_information', 'knowledge_application', 'program_expectations', 'program_obstacles',
         'additional_comments',
     )
-    
-    list_select_related = ('enterprise',)
-    actions = ['export_as_csv', 'mark_as_reviewed']
+    # readonly_fields = ('enterprise', 'position_level')
+    actions = ['export_as_csv']
     
     def export_as_csv(self, request, queryset):
         response = HttpResponse(content_type='text/csv')
@@ -41,14 +39,21 @@ class SurveyResponseAdmin(admin.ModelAdmin):
     
     export_as_csv.short_description = "Экспортировать в CSV"
     
-    def mark_as_reviewed(self, request, queryset):
-        updated = queryset.update(reviewed=True)
-        self.message_user(request, f"{updated} записей были отмечены как проверенные.")
-    
-    mark_as_reviewed.short_description = "Отметить как проверенные"
-    
-    class Media:
-        js = ('js/admin_custom.js',)
+    def formfield_for_choice_field(self, db_field, request, **kwargs):
+        if db_field.name in SurveyForm.base_fields and hasattr(SurveyForm.base_fields[db_field.name], 'choices'):
+            kwargs['choices'] = SurveyForm.base_fields[db_field.name].choices
+        return super().formfield_for_choice_field(db_field, request, **kwargs)
+
+
+actions = ['mark_as_reviewed']
+
+
+def mark_as_reviewed(self, request, queryset):
+    updated = queryset.update(reviewed=True)  # Устанавливаем поле reviewed как True
+    self.message_user(request, f"{updated} записей были отмечены как проверенные.")
+
+
+mark_as_reviewed.short_description = "Отметить как проверенные"
 
 
 class SurveyResponseInline(admin.TabularInline):
@@ -61,15 +66,17 @@ class EnterpriseAdmin(admin.ModelAdmin):
     list_display = ('name', 'employees', 'num_responses')
     list_filter = ('name', 'employees')
     search_fields = ('name', 'employees')
-    inlines = [SurveyResponseInline]
+    inlines = [SurveyResponseInline]  # Отображение ответов на опросы для предприятия
     
-    @admin.display(description='Количество сотрудников')
+    def num_responses(self, obj):
+        return obj.surveyresponse_set.count()
+    
+    num_responses.short_description = 'Количество ответов'
+    
     def employees(self, obj):
         return obj.employees
     
-    @admin.display(description='Количество ответов')
-    def num_responses(self, obj):
-        return obj.surveyresponse_set.count()
+    employees.short_description = 'Количество сотрудников'
 
 
 admin.site.register(SurveyResponse, SurveyResponseAdmin)

@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 
-from .models import Enterprise, SurveyResponse
+from .models import Enterprise
 
 
 class CustomUserCreationForm(UserCreationForm):
@@ -174,39 +174,3 @@ class EnterpriseUpdateForm(forms.ModelForm):
             'conclusions': 'Выводы',
             'recommendations': 'План корректирующих мероприятий',
         }
-
-
-class SurveyResponseAdminForm(forms.ModelForm):
-    class Meta:
-        model = SurveyResponse
-        fields = '__all__'
-        widgets = {
-            'position_level': forms.Select(choices=SurveyForm.POSITION_LEVEL_CHOICES, attrs={'class': 'tooltip-field'}),
-            'program_goal_understanding': forms.Select(choices=SurveyForm.PROGRAM_GOAL_UNDERSTANDING_CHOICES, attrs={'class': 'tooltip-field'}),
-            'role_understanding': forms.Select(choices=SurveyForm.ROLE_UNDERSTANDING_CHOICES, attrs={'class': 'tooltip-field'}),
-            'supervisor_support': forms.Select(choices=SurveyForm.SUPERVISOR_SUPPORT_CHOICES, attrs={'class': 'tooltip-field'}),
-            'program_encouragement': forms.Select(choices=SurveyForm.PROGRAM_ENCOURAGEMENT_CHOICES, attrs={'class': 'tooltip-field'}),
-            'program_impact': forms.Select(choices=SurveyForm.PROGRAM_IMPACT_CHOICES, attrs={'class': 'tooltip-field'}),
-            'interaction_assessment': forms.Select(choices=SurveyForm.INTERACTION_ASSESSMENT_CHOICES, attrs={'class': 'tooltip-field'}),
-            'program_priority': forms.Select(choices=SurveyForm.PROGRAM_PRIORITY_CHOICES, attrs={'class': 'tooltip-field'}),
-            'program_information': forms.Select(choices=SurveyForm.PROGRAM_INFORMATION_CHOICES, attrs={'class': 'tooltip-field'}),
-            'knowledge_application': forms.Select(choices=SurveyForm.KNOWLEDGE_APPLICATION_CHOICES, attrs={'class': 'tooltip-field'}),
-            'program_expectations': forms.Select(choices=SurveyForm.PROGRAM_EXPECTATIONS_CHOICES, attrs={'class': 'tooltip-field'}),
-            'program_obstacles': forms.Select(choices=SurveyForm.PROGRAM_OBSTACLES_CHOICES, attrs={'class': 'tooltip-field'}),
-        }
-        labels = {
-            'position_level': 'Распределение должностей',
-            'program_goal_understanding': 'Понимание целей внедрения программы на предприятии',
-            'role_understanding': 'Понимание роли в Программе',
-            'supervisor_support': 'Вовлеченность руководства и сотрудников предприятия в реализацию проекта',
-            'program_encouragement': 'Оценка поощрения участия в Программе',
-            'program_impact': 'Оценка эффективности Программы',
-            'interaction_assessment': 'Оценка эффективности взаимодействия',
-            'program_priority': 'Приоритет Программы в работе',
-            'program_information': 'Информированность о Программе',
-            'knowledge_application': 'Эффективность обучения',
-            'program_expectations': 'Ожидания от Программы',
-            'program_obstacles': 'Препятствия',
-            'additional_comments': 'Дополнительные комментарии',
-        }
-        
