@@ -31,8 +31,8 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 DEBUG = False
 
 ALLOWED_HOSTS = [
-    '92.53.120.77',
-    'akryshnia-django-survey-app-2b4e.twc1.net',
+    '92.51.39.179',
+    'akryshnia-django-survey-app-f731.twc1.net',
 ]
 
 
