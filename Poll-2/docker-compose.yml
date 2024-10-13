@@ -2,8 +2,6 @@ volumes:
   pgdata:
   static:
   media:
-      #  certbot-conf:
-      #  certbot-www:
 
 networks:
   app-network:
@@ -36,7 +34,7 @@ services:
         python manage.py collectstatic --no-input &&
         python manage.py makemigrations &&
         python manage.py migrate &&
-        gunicorn --workers=4 --reload --max-requests=1000 backend.wsgi -b 0.0.0.0:8000
+        gunicorn --workers=4 --reload --max-requests=1000 backend.wsgi -b 0.0.0.0:8000""
     networks:
       - app-network
     <<: *restart-policy
@@ -46,8 +44,7 @@ services:
     working_dir: /app
     image: nginx:stable-alpine
     ports:
-      - "80:80"
-      - "443:443"
+      - "8080:80"
     volumes:
       - static:/app/static
       - media:/app/media
@@ -100,13 +97,11 @@ services:
     <<: *restart-policy
 
   certbot:
-    image: certbot/certbot
-    container_name: certbot
-    volumes:
-      - ./docker/certbot/conf:/etc/letsencrypt:rw
-      - ./docker/certbot/www:/var/www/certbot:rw
-    command: certonly --webroot --webroot-path=/var/www/certbot --email admin@svartha.ru --agree-tos --no-eff-email -d fcc.svartha.ru -d www.fcc.svartha.ru
-    depends_on:
-      - nginx
-    networks:
-      - app-network
+      image: certbot/certbot
+      container_name: certbot
+      volumes:
+          - ./docker/certbot/conf:/etc/letsencrypt:rw
+          - ./docker/certbot/www:/var/www/certbot:rw
+      command: certonly --webroot --webroot-path=/var/www/certbot/ --email svartha@gmail.com --agree-tos --no-eff-email -d 195.80.50.24 -d www.svartha.ru
+      depends_on:
+        - nginx
