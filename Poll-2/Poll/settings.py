@@ -31,8 +31,8 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 DEBUG = False
 
 ALLOWED_HOSTS = [
-    '195.80.50.24',
-    'fcc.svartha.ru',
+    '92.51.39.179',
+    'akryshnia-django-survey-app-f731.twc1.net',
 ]
 
 
@@ -90,12 +90,6 @@ WSGI_APPLICATION = 'Poll.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
 
 DATABASES = {
     "default": {
