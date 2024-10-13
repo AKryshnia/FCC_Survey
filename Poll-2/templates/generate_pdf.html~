@@ -135,14 +135,16 @@
 
 {% if responses %}
     <h2 style="font-size: 20px; margin-top: 20px;">Дополнительные комментарии:</h2>
-    <ul style="list-style-type: none; padding-left: 0;">
+    <ol style="list-style-type: decimal; padding-left: 20px;">
         {% for response in responses %}
             {% if response.additional_comments %}
-                <li style="margin-bottom: 5px;">{{ response.additional_comments }}</li>
+                <ol style="list-style-type: decimal; padding-left: 20px;">
+                    <li style="margin-bottom: 5px;">{{ response.additional_comments }}</li>
+                </ol>
             {% else %}<p style="font-size: 20px; margin-top: 20px;">Дополнительные комментарии отсутствуют</p>
             {% endif %}
         {% endfor %}
-    </ul>
+    </ol>
 
 {% endif %}
 
