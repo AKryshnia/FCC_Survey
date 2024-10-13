@@ -10,9 +10,8 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 import os
-# from dotenv import load_dotenv
+from dotenv import load_dotenv
 from pathlib import Path
-import environ
 
 from decouple import config
 from django.contrib import staticfiles
@@ -20,24 +19,21 @@ from django.contrib import staticfiles
 # Build paths inside the img like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# load_dotenv()
+load_dotenv()
 
-
-
-
-# Работа с env.dev
-env = environ.Env()
-
-environ.Env.read_env(env_file=Path('./docker/env/.env.prod'))
-
-SECRET_KEY = env('SECRET_KEY')
+# Quick-start development settings - unsuitable for production
+# See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-DEBUG = int(env('DEBUG', default=1))
+SECRET_KEY = os.getenv('SECRET_KEY')
 
-ALLOWED_HOSTS = env('ALLOWED_HOSTS').split()
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = True
 
-CSRF_TRUSTED_ORIGINS = env('CSRF_TRUSTED_ORIGINS').split()
+ALLOWED_HOSTS = [
+    '127.0.0.1',
+    'localhost',
+]
 
 
 # Application definition
@@ -104,11 +100,11 @@ WSGI_APPLICATION = 'Poll.wsgi.application'
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": os.getenv('POSTGRES_DB'),
-        "USER": os.getenv('POSTGRES_USER'),
-        "PASSWORD": os.getenv("POSTGRES_PASSWORD"),
-        "HOST": os.getenv('POSTGRES_HOST'),
-        "PORT": os.getenv('POSTGRES_PORT'),
+        "NAME": os.getenv('DB_NAME'),
+        "USER": os.getenv('DB_USER'),
+        "PASSWORD": os.getenv("DB_PASSWORD"),
+        "HOST": os.getenv('DB_HOST'),
+        "PORT": os.getenv('DB_PORT'),
     }
 }
 
@@ -165,11 +161,8 @@ STATICFILES_DIRS = [
 ]
 
 
-CELERY_BROKER_URL = env('CELERY_BROKER_URL')
-CELERY_RESULT_BACKEND = env('CELERY_RESULT_BACKEND')
+CELERY_BROKER_URL = 'redis://localhost:6379/0'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
 
 
 LOGIN_URL = 'login'  # URL для страницы входа
-
-
-WEASYPRINT_FONT_CONFIG = os.path.join(BASE_DIR, 'fonts.conf')
