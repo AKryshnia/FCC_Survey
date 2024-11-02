@@ -1,0 +1,38 @@
+# Путь к исполняемому файлу Gunicorn
+bind = "0.0.0.0:8000"
+
+# Количество рабочих процессов
+workers = 3
+
+# Тип рабочих процессов (sync, gevent, eventlet, etc.)
+worker_class = "sync"
+
+# Путь к лог-файлу для ошибок
+errorlog = "/var/log/gunicorn/error.log"
+
+# Путь к лог-файлу для доступа
+accesslog = "/var/log/gunicorn/access.log"
+
+# Уровень логирования
+loglevel = "info"
+
+# Таймаут для рабочих процессов
+timeout = 120
+
+# Максимальное количество запросов, которые может обработать рабочий процесс
+max_requests = 1000
+
+# Количество запросов, после которых рабочий процесс будет перезапущен
+max_requests_jitter = 50
+
+# Путь к директории проекта
+chdir = "/home/Poll-2"
+
+# Путь к виртуальной среде
+pythonpath = "/home/Poll-2/env/bin/python"
+
+# Путь к файлу настроек Django
+django_settings = "Poll.settings"
+
+# Путь к WSGI-приложению
+wsgi_app = "Poll.wsgi:application"

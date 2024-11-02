@@ -1,0 +1,17 @@
+{% extends 'flatpages/default.html' %}
+ 
+{% block title %}
+<h2>Редактирование предприятия</h2>
+{% endblock title %}
+ 
+{% block content %}
+
+    <h1>Редактировать предприятие</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">Сохранить изменения</button><br><br>
+        <a href="{% url 'enterprise_detail' enterprise.id %}" class="btn btn-secondary">Вернуться без сохранения</a>
+    </form>
+
+{% endblock content %}

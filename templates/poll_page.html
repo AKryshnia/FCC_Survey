@@ -1,0 +1,213 @@
+{% extends 'flatpages/default.html' %}
+ 
+{% block title %}
+<h2>Анкета для сотрудника</h2>
+{% endblock title %}
+ 
+{% block content %}
+
+<style>
+    .messages {
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+    }
+    .messages li {
+        color: red;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+</style>
+
+   {% csrf_token %}
+   <h2>Анкета для сотрудника</h2>
+    <hr>
+    <br>
+    <form method="post">
+        {% csrf_token %}
+        <input type="hidden" name="enterprise" value="{{ enterprise.id }}">
+        {% if form.non_field_errors %}
+            <div class="errorlist">
+                {{ form.non_field_errors }}
+            </div>
+        {% endif %}
+
+        {% if messages and not hide_messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+    <h3>Вопросы:</h3><br>
+        <h2>1. Пожалуйста, укажите уровень Вашей должности</h2>
+        {% if form.position_level.errors %}
+            <div class="errorlist">
+                {{ form.position_level.errors }}
+            </div>
+        {% endif %}
+        {% for choice in form.position_level %}
+            <div>
+                {{ choice.tag }}
+                <label for="{{ choice.id_for_label }}">{{ choice.choice_label }}</label>
+            </div>
+        {% endfor %}
+    <br>    
+        <h2>2. Понимаете ли Вы цель(-и) Программы на нашем предприятии?</h2>
+        {% if form.program_goal_understanding.errors %}
+            <div class="errorlist">
+                {{ form.program_goal_understanding.errors }}
+            </div>
+        {% endif %}
+        {% for choice in form.program_goal_understanding %}
+            <div>
+                {{ choice.tag }}
+                <label for="{{ choice.id_for_label }}">{{ choice.choice_label }}</label>
+            </div>
+        {% endfor %}
+    <br>    
+        <h2>3. Понимаете ли Вы свою роль в Программе: ясны ли Вам задачи, которые Вам необходимо выполнить, мероприятия в которых нужно принять участие?</h2>
+        {% if form.role_understanding.errors %}
+            <div class="errorlist">
+                {{ form.role_understanding.errors }}
+            </div>
+        {% endif %}
+        {% for choice in form.role_understanding %}
+            <div>
+                {{ choice.tag }}
+                <label for="{{ choice.id_for_label }}">{{ choice.choice_label }}</label>
+            </div>
+        {% endfor %}
+    <br>    
+        <h2>4. Понимает ли Ваш непосредственный руководитель степень Вашего участия в Программе, содействует ли он Вашему участию в Программе?</h2>
+        {% if form.supervisor_support.errors %}
+            <div class="errorlist">
+                {{ form.supervisor_support.errors }}
+            </div>
+        {% endif %}
+        {% for choice in form.supervisor_support %}
+            <div>
+                {{ choice.tag }}
+                <label for="{{ choice.id_for_label }}">{{ choice.choice_label }}</label>
+            </div>
+        {% endfor %}
+    <br>
+        <h2>5. На нашем предприятии поощряется участие в Программе?</h2>
+        {% if form.program_encouragement.errors %}
+            <div class="errorlist">
+                {{ form.program_encouragement.errors }}
+            </div>
+        {% endif %}
+        {% for choice in form.program_encouragement %}
+            <div>
+                {{ choice.tag }}
+                <label for="{{ choice.id_for_label }}">{{ choice.choice_label }}</label>
+            </div>
+        {% endfor %}    
+    <br>
+        <h2>6. Программа повышения производительности труда поможет в достижении целей нашего предприятия?</h2>
+        {% if form.program_impact.errors %}
+            <div class="errorlist">
+                {{ form.program_impact.errors }}
+            </div>
+        {% endif %}
+        {% for choice in form.program_impact %}
+            <div>
+                {{ choice.tag }}
+                <label for="{{ choice.id_for_label }}">{{ choice.choice_label }}</label>
+            </div>
+        {% endfor %}
+    <br>
+        <h2>7. Как Вы оцениваете взаимодействие рабочей группы и команды ФЦК?</h2>
+        {% if form.interaction_assessment.errors %}
+            <div class="errorlist">
+                {{ form.interaction_assessment.errors }}
+            </div>
+        {% endif %}
+        {% for choice in form.interaction_assessment %}
+            <div>
+                {{ choice.tag }}
+                <label for="{{ choice.id_for_label }}">{{ choice.choice_label }}</label>
+            </div>
+        {% endfor %}
+    <br>
+        <h2>8. Какой приоритет у Программы повышения производительности труда в Вашей работе?</h2>
+        {% if form.program_priority.errors %}
+            <div class="errorlist">
+                {{ form.program_priority.errors }}
+            </div>
+        {% endif %}
+        {% for choice in form.program_priority %}
+            <div>
+                {{ choice.tag }}
+                <label for="{{ choice.id_for_label }}">{{ choice.choice_label }}</label>
+            </div>
+        {% endfor %}
+    <br>
+        <h2>9. Достаточно ли информации о Программе Вы получаете?</h2>
+        {% if form.program_information.errors %}
+            <div class="errorlist">
+                {{ form.program_information.errors }}
+            </div>
+        {% endif %}
+        {% for choice in form.program_information %}
+            <div>
+                {{ choice.tag }}
+                <label for="{{ choice.id_for_label }}">{{ choice.choice_label }}</label>
+            </div>
+        {% endfor %}
+    <br>
+        <h2>10. Можете ли вы применить знания и инструменты, полученные во время обучения?</h2>
+        {% if form.knowledge_application.errors %}
+            <div class="errorlist">
+                {{ form.knowledge_application.errors }}
+            </div>
+        {% endif %}
+        {% for choice in form.knowledge_application %}
+            <div>
+                {{ choice.tag }}
+                <label for="{{ choice.id_for_label }}">{{ choice.choice_label }}</label>
+            </div>
+        {% endfor %}
+    <br>
+        <h2>11. Что Вы ожидаете для себя по итогам участия в Программе повышения производительности труда?</h2>
+        {% if form.program_expectations.errors %}
+            <div class="errorlist">
+                {{ form.program_expectations.errors }}
+            </div>
+        {% endif %}
+        {% for choice in form.program_expectations %}
+            <div>
+                {{ choice.tag }}
+                <label for="{{ choice.id_for_label }}">{{ choice.choice_label }}</label>
+            </div>
+        {% endfor %}
+    <br>
+        <h2>12. Что по Вашему мнению является препятствиями для своевременной реализации Программы?</h2>
+        {% if form.program_obstacles.errors %}
+            <div class="errorlist">
+                {{ form.program_obstacles.errors }}
+            </div>
+        {% endif %}
+        {% for choice in form.program_obstacles %}
+            <div>
+                {{ choice.tag }}
+                <label for="{{ choice.id_for_label }}">{{ choice.choice_label }}</label>
+            </div>
+        {% endfor %}
+    <br>
+        <h2>Напишите, пожалуйста, Ваши пожелания или рекомендации по повышению производительности труда (по желанию)</h2>
+        {% if form.additional_comments.errors %}
+            <div class="errorlist">
+                {{ form.additional_comments.errors }}
+            </div>
+        {% endif %}
+        {{ form.additional_comments }}
+        <br>
+    
+        <button type="submit">Отправить</button><br><br>
+    </form>
+    
+    
+{% endblock content %}
