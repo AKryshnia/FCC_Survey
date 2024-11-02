@@ -1,0 +1,13 @@
+bind = "0.0.0.0:8000"
+workers = 3
+worker_class = "sync"
+errorlog = "/home/Poll-2/logs/error.log"
+accesslog = "/home/Poll-2/logs/access.log"
+loglevel = "info"
+timeout = 120
+max_requests = 1000
+max_requests_jitter = 50
+chdir = "/home/Poll-2"
+pythonpath = "/home/Poll-2/env/bin/python"
+django_settings = "Poll.settings"
+wsgi_app = "Poll.wsgi:application"

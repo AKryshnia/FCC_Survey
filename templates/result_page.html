@@ -1,0 +1,37 @@
+{% extends 'flatpages/default.html' %}
+{% load custom_filters %}
+
+{% block title %}
+<h2>Результаты опроса</h2>
+{% endblock title %}
+ 
+{% block content %}
+  <h1>Результаты опроса для предприятия: {{ enterprise.name }}</h1>
+    <p>ПЛАН (численность сотрудников): {{ enterprise.employees }}</p>
+    <p>ФАКТ (прошли опрос): {{ responses_count }}</p>
+
+    {% for field, chart_info in charts.items %}
+        <div style="word-wrap: break-word; max-width: 100%;">
+            <h2>{{ chart_info.title }}</h2>
+            <img src="{{ chart_info.chart }}" alt="{{ chart_info.title }}">
+            <ul>
+                {% for choice, color in chart_info.choices_with_colors %}
+                    <li style="list-style: none;">
+                        <span style="display: inline-block; width: 10px; height: 10px; background-color: {{ color }}; margin-right: 5px;"></span>
+                        {{ choice }}
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endfor %}
+    
+    <h2>Дополнительные комментарии</h2>
+    <ul>
+        {% for response in responses %}
+            <li>
+                <strong>Ответ #{{ response.id }}:</strong> {{ response.additional_comments }}
+            </li>
+        {% endfor %}
+    </ul>
+    
+{% endblock content %}

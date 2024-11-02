@@ -1,0 +1,66 @@
+{% extends 'flatpages/default.html' %}
+
+{% load custom_filters %}
+
+{% block title %}
+<h2>Главная страница</h2>
+{% endblock title %}
+
+{% block content %}
+<style>
+    .welcome-message {
+        font-size: 1.5em; /* Увеличиваем размер шрифта */
+        font-weight: bold; /* Делаем текст жирным */
+    }
+</style>
+<div class="container mt-5">
+    <h1>Добро пожаловать!</h1><br>
+	<h2><p style="color: red;">Внимание: сайт находится в тестовом режиме.</p></h2>
+    <div class="mt-4">
+        {% if user.is_authenticated %}
+            <p class="welcome-message">Привет, {{ user.username|display_username }}!</p><br>
+            {% if user.is_superuser %}
+                <a href="{% url 'enterprise_list' %}" class="btn btn-primary">Список предприятий</a>
+                <br><br>
+                <a href="{% url 'user_list' %}" class="btn btn-primary">Список зарегистрированных пользователей</a>
+                <br><br>
+                <h2>Ваши предприятия</h2><br>
+                <ul>
+                    {% for enterprise in user_enterprises %}
+                        <p><a href="{% url 'enterprise_detail' enterprise.id %}">{{ enterprise.name }}</a></p><br>
+                    {% empty %}
+                        <p>У вас нет созданных предприятий.</p>
+                    {% endfor %}
+                </ul>
+                <br>
+                <h2>Предприятия других пользователей</h2><br>
+                <ul>
+                    {% for enterprise in other_enterprises %}
+                        <p><a href="{% url 'enterprise_detail' enterprise.id %}">{{ enterprise.name }}</a></p>
+                    {% empty %}
+                        <p>Другие пользователи не создали предприятия.</p>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <h2>Ваши предприятия</h2>
+                <ul>
+                    {% for enterprise in user_enterprises %}
+                        <li><a href="{% url 'enterprise_detail' enterprise.id %}">{{ enterprise.name }}</a></li>
+                    {% empty %}
+                        <li>У вас нет созданных предприятий.</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+            <br><br>
+            <a href="{% url 'add_enterprise' %}" class="btn btn-success">Добавить предприятие</a>
+            <br><br>
+            <a href="{% url 'logout' %}" class="btn btn-danger">Выйти</a>
+        {% else %}
+            <br><br>
+            <a href="{% url 'register' %}" class="btn btn-primary">Зарегистрироваться</a>
+            <br><br>
+            <a href="{% url 'login' %}" class="btn btn-success">Войти</a>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
