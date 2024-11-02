@@ -1,4 +1,4 @@
-# Django_Survey_App
+# FCC Survey Service
 Django-based enterprise-scale survey project
 
 Этот Джанго-сервис предназначен для предприятий, проводящих анкетирование по системе оптимизации производства.  
